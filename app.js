@@ -10,17 +10,11 @@ const apiResponseHandler = require('./utils/responseHandler')
 const logger = require('./config/logger')
 const errorHandler = require('./middleware/errorHandler')
 const asyncHandler = require('./middleware/asyncHandler')
-const swaggerUi = require('swagger-ui-express') // 导入 swagger-ui-express
-const swaggerSpec = require('./config/swagger') // 导入 Swagger 配置
 
 // 创建一个 Express 应用
 const app = express()
 // 跨域处理
 app.use(cors())
-// ================== API 文档路由 ==================
-// 将 Swagger UI 放在自定义响应处理之前，避免冲突
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-
 // 中间件 (这里的顺序很重要，apiResponseHandler 应该在普通路由和控制器之前)
 app.use(apiResponseHandler) // 添加我们的自定义响应处理器
 
@@ -39,18 +33,6 @@ app.get('/', (req, res) => {
 // 导入并注册 API 路由模块
 const apiRouter = require('./routers/index')
 app.use('/api', apiRouter)
-
-// 一个用于测试我们的异步错误处理器的路由
-// 使用 asyncHandler 包装后，可以直接 throw 错误
-app.get(
-  '/error',
-  asyncHandler(async (req, res, next) => {
-    // 模拟一个异步操作
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    // 在异步函数中直接抛出错误
-    throw new Error('这是一个在异步路由中被捕获的测试错误!')
-  })
-)
 
 // 全局错误处理器 - 必须是最后一个中间件
 app.use(errorHandler)

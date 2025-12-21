@@ -22,6 +22,16 @@ const apiResponseHandler = (req, res, next) => {
     // 如果 data 参数本身就是一个已经构建好的完整响应体，则直接发送
     // 这主要用于 errorHandler。
     if (typeof data === 'object' && data !== null && data.hasOwnProperty('code')) {
+      if (process.env.NODE_ENV === 'development') {
+        try {
+          const stringifiedData = JSON.stringify(data);
+          const dataPreview = stringifiedData.substring(0, 500) + (stringifiedData.length > 500 ? '...' : '');
+          logger.debug(`[responseHandler] 发送预格式化数据 (前500字符): ${dataPreview}`);
+          logger.debug(`[responseHandler] 预格式化数据大小: ${Buffer.byteLength(stringifiedData, 'utf8')} 字节`);
+        } catch (logError) {
+          logger.error(`[responseHandler] 无法序列化数据进行日志记录: ${logError.message}`);
+        }
+      }
       return originalSend(data);
     }
     
@@ -32,6 +42,16 @@ const apiResponseHandler = (req, res, next) => {
       data: data || null,
     };
 
+    if (process.env.NODE_ENV === 'development') {
+        try {
+            const stringifiedBody = JSON.stringify(responseBody);
+            const bodyPreview = stringifiedBody.substring(0, 500) + (stringifiedBody.length > 500 ? '...' : '');
+            logger.debug(`[responseHandler] 发送构建的响应体 (前500字符): ${bodyPreview}`);
+            logger.debug(`[responseHandler] 构建的响应体大小: ${Buffer.byteLength(stringifiedBody, 'utf8')} 字节`);
+        } catch (logError) {
+            logger.error(`[responseHandler] 无法序列化响应体进行日志记录: ${logError.message}`);
+        }
+    }
     originalSend(responseBody);
   };
 
