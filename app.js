@@ -10,6 +10,8 @@ const apiResponseHandler = require('./utils/responseHandler')
 const logger = require('./config/logger')
 const errorHandler = require('./middleware/errorHandler')
 const asyncHandler = require('./middleware/asyncHandler')
+const { connectDB, initializeDatabase } = require('./config/database'); // Import database functions
+const initDb = require('./utils/init_db'); // Import initDb utility
 
 // 创建一个 Express 应用
 const app = express()
@@ -41,7 +43,14 @@ app.use(errorHandler)
 const PORT = process.env.PORT || 3000
 
 // 启动服务器
-app.listen(PORT, () => {
-  // 使用我们的日志记录器替代 console.log
-  logger.info(`服务器正在 ${process.env.NODE_ENV} 模式下运行于 ${PORT} 端口。`)
-})
+const startServer = async () => {
+  await initDb(); // Ensure database exists and is initialized
+  await connectDB(); // Connect to the database
+  await initializeDatabase(); // Initialize the database (sync models)
+  app.listen(PORT, () => {
+    // 使用我们的日志记录器替代 console.log
+    logger.info(`服务器正在 ${process.env.NODE_ENV} 模式下运行于 ${PORT} 端口。`)
+  })
+}
+
+startServer();
