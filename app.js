@@ -1,3 +1,17 @@
+// =================================================================
+// GLOBAL ERROR HANDLERS - MUST BE AT THE VERY TOP
+// =================================================================
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ [FATAL] Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ [FATAL] Uncaught Exception:', error.stack || error);
+  process.exit(1);
+});
+// =================================================================
+
 const path = require('path')
 const express = require('express')
 const dotenv = require('dotenv')
@@ -33,7 +47,7 @@ app.get('/', (req, res) => {
 })
 
 // 导入并注册 API 路由模块
-const apiRouter = require('./routers/index')
+const apiRouter = require('./routers/user')
 app.use('/api', apiRouter)
 
 // 全局错误处理器 - 必须是最后一个中间件
@@ -42,15 +56,27 @@ app.use(errorHandler)
 // 从环境变量获取端口，并提供一个默认值
 const PORT = process.env.PORT || 3000
 
-// 启动服务器
 const startServer = async () => {
-  await initDb(); // Ensure database exists and is initialized
-  await connectDB(); // Connect to the database
-  await initializeDatabase(); // Initialize the database (sync models)
-  app.listen(PORT, () => {
-    // 使用我们的日志记录器替代 console.log
-    logger.info(`服务器正在 ${process.env.NODE_ENV} 模式下运行于 ${PORT} 端口。`)
-  })
-}
+  try {
+    console.log('1. [Startup] Initializing database...');
+    await initDb(); // Ensure database exists and is initialized
+    
+    console.log('2. [Startup] Connecting to database...');
+    await connectDB(); // Connect to the database
+    
+    console.log('3. [Startup] Synchronizing models...');
+    await initializeDatabase(); // Initialize the database (sync models)
+    
+    console.log('4. [Startup] Starting Express server...');
+    app.listen(PORT, () => {
+      // 使用我们的日志记录器替代 console.log
+      logger.info(`✅ 服务器正在 ${process.env.NODE_ENV} 模式下成功运行于 ${PORT} 端口。`);
+    });
+  } catch (error) {
+    console.error('❌ [FATAL] 服务器启动失败:');
+    console.error('详细错误:', error);
+    process.exit(1); // Exit with a failure code
+  }
+};
 
 startServer();

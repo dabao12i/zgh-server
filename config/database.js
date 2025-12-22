@@ -36,7 +36,7 @@ const connectDB = async () => {
 
 const initializeDatabase = async () => {
   try {
-    await sequelize.sync({ force: false }); // `force: true` will drop existing tables
+    await sequelize.sync({ alter: true }); // `alter: true` will try to change existing tables to match models
     console.log('Database synchronized.');
   } catch (error) {
     console.error('Error synchronizing the database:', error);
