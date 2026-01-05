@@ -31,5 +31,9 @@ router.get('/protected', auth, asyncHandler(async (req, res) => {
   res.cc({ message: `欢迎，用户ID: ${req.user.id}，您已访问受保护的资源！`, user: req.user }, '访问受保护资源成功');
 }));
 
+// 文件上传相关路由
+const fileRouter = require('./fileRouter');
+router.use('/files', fileRouter);
+
 // 导出路由实例
 module.exports = router;

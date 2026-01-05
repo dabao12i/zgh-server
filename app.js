@@ -32,6 +32,9 @@ app.get('/', (req, res) => {
   res.cc({ info: '欢迎使用 API!' })
 })
 
+// 开放 'uploads' 目录作为静态资源
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
 // 导入并注册 API 路由模块
 const apiRouter = require('./routers/index')
 app.use('/api', apiRouter)
