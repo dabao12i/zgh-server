@@ -35,5 +35,9 @@ router.get('/protected', auth, asyncHandler(async (req, res) => {
 const fileRouter = require('./fileRouter');
 router.use('/files', fileRouter);
 
+// 用户管理相关路由
+const userRouter = require('./userRouter');
+router.use('/users', userRouter);
+
 // 导出路由实例
 module.exports = router;

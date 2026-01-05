@@ -8,7 +8,7 @@ const upload = require('../middleware/upload');
 
 const router = express.Router();
 
-router.post('/upload', uploadFile);
+router.post('/upload', upload, uploadFile);
 
 router.delete('/:filename', deleteFile);
 

@@ -2,6 +2,7 @@ const path = require('path')
 const express = require('express')
 const dotenv = require('dotenv')
 const cors = require('cors')
+const fs = require('fs');
 // 加载特定环境的 .env 文件
 const envPath = path.resolve(__dirname, `.env.${process.env.NODE_ENV || 'development'}`)
 dotenv.config({ path: envPath })
@@ -31,6 +32,14 @@ app.get('/', (req, res) => {
   // 使用新的 res.cc(data, msg) 便捷方法
   res.cc({ info: '欢迎使用 API!' })
 })
+
+// 确保 'uploads' 目录存在
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
+    logger.info(`创建目录: ${uploadsDir}`);
+}
+
 
 // 开放 'uploads' 目录作为静态资源
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))

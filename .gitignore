@@ -8,3 +8,4 @@
 # ...但不要忽略示例模板
 !.env.example
 .history
+/uploads
