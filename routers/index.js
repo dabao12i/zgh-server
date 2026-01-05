@@ -1,5 +1,5 @@
 const express = require('express');
-const { login } = require('../controllers/authController'); // 导入认证控制器
+const { login, register } = require('../controllers/authController'); // 导入认证控制器和注册控制器
 const auth = require('../middleware/auth'); // 导入认证中间件
 const asyncHandler = require('../middleware/asyncHandler'); // 导入异步错误处理包装器
 
@@ -16,6 +16,19 @@ const router = express.Router();
  * @apiSuccess {Object} user 用户信息
  */
 router.post('/login', login);
+
+/**
+ * @apiGroup 认证
+ * @apiName 用户注册
+ * @api {post} /register 用户注册
+ * @apiParam {String} username 用户名
+ * @apiParam {String} email 邮箱
+ * @apiParam {String} password 密码
+ * @apiParam {String} [role='user'] 角色 (可选, 默认为 'user')
+ * @apiSuccess {String} token JWT Token
+ * @apiSuccess {Object} user 用户信息
+ */
+router.post('/register', register);
 
 /**
  * @apiGroup 认证

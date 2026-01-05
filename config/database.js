@@ -16,13 +16,18 @@ const sequelize = new Sequelize(
 );
 
 // Dynamically import and initialize all models
+const models = {}; // Create an object to hold all models
 const modelsDir = path.join(__dirname, '../models');
 fs.readdirSync(modelsDir)
   .filter(file => file.indexOf('.') !== 0 && file.slice(-3) === '.js')
   .forEach(file => {
     const modelDefiner = require(path.join(modelsDir, file));
-    modelDefiner(sequelize); // Pass the sequelize instance to the model definition function
+    const model = modelDefiner(sequelize); // Get the model instance
+    models[model.name] = model; // Store it by name
   });
+
+// Attach models to the sequelize instance for convenience
+sequelize.models = models;
 
 const connectDB = async () => {
   try {
@@ -44,4 +49,4 @@ const initializeDatabase = async () => {
   }
 };
 
-module.exports = { sequelize, connectDB, initializeDatabase };
+module.exports = { sequelize, models, connectDB, initializeDatabase };
