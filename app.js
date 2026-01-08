@@ -2,7 +2,7 @@ const path = require('path')
 const express = require('express')
 const dotenv = require('dotenv')
 const cors = require('cors')
-const fs = require('fs');
+const fs = require('fs')
 // 加载特定环境的 .env 文件
 const envPath = path.resolve(__dirname, `.env.${process.env.NODE_ENV || 'development'}`)
 dotenv.config({ path: envPath })
@@ -11,13 +11,17 @@ const apiResponseHandler = require('./utils/responseHandler')
 const logger = require('./config/logger')
 const errorHandler = require('./middleware/errorHandler')
 const asyncHandler = require('./middleware/asyncHandler')
-const { connectDB, initializeDatabase } = require('./config/database'); // Import database functions
-const initDb = require('./utils/init_db'); // Import initDb utility
+const { connectDB, initializeDatabase } = require('./config/database') // Import database functions
+const initDb = require('./utils/init_db') // Import initDb utility
 
 // 创建一个 Express 应用
 const app = express()
 // 跨域处理
 app.use(cors())
+
+// JSON 解析中间件，用于解析 application/json 类型的请求体
+app.use(express.json())
+
 // 中间件 (这里的顺序很重要，apiResponseHandler 应该在普通路由和控制器之前)
 app.use(apiResponseHandler) // 添加我们的自定义响应处理器
 
@@ -34,12 +38,11 @@ app.get('/', (req, res) => {
 })
 
 // 确保 'uploads' 目录存在
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join(__dirname, 'uploads')
 if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir);
-    logger.info(`创建目录: ${uploadsDir}`);
+  fs.mkdirSync(uploadsDir)
+  logger.info(`创建目录: ${uploadsDir}`)
 }
-
 
 // 开放 'uploads' 目录作为静态资源
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
@@ -56,13 +59,13 @@ const PORT = process.env.PORT || 3000
 
 // 启动服务器
 const startServer = async () => {
-  await initDb(); // Ensure database exists and is initialized
-  await connectDB(); // Connect to the database
-  await initializeDatabase(); // Initialize the database (sync models)
+  await initDb() // Ensure database exists and is initialized
+  await connectDB() // Connect to the database
+  await initializeDatabase() // Initialize the database (sync models)
   app.listen(PORT, () => {
     // 使用我们的日志记录器替代 console.log
     logger.info(`服务器正在 ${process.env.NODE_ENV} 模式下运行于 ${PORT} 端口。`)
   })
 }
 
-startServer();
+startServer()

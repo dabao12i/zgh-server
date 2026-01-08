@@ -12,7 +12,7 @@ const register = asyncHandler(async (req, res, next) => {
   const { username, email, password, role } = req.body
 
   // 1. Validate input
-  if (!username || !email || !password) {
+  if (!username || !password) {
     const error = new Error('Please enter all required fields: username, email, password')
     error.code = codes.INVALID_PARAMS
     error.isOperational = true
@@ -22,18 +22,19 @@ const register = asyncHandler(async (req, res, next) => {
   // 2. Check if user already exists
   let user = await User.findOne({ where: { username } })
   if (user) {
-    const error = new Error('Username already exists')
+    const error = new Error('用户名已经注册')
     error.code = codes.CONFLICT // Use a more specific code for conflict
     error.isOperational = true
     return next(error)
   }
-
-  user = await User.findOne({ where: { email } })
-  if (user) {
-    const error = new Error('Email already exists')
-    error.code = codes.CONFLICT
-    error.isOperational = true
-    return next(error)
+  if (email) {
+    user = await User.findOne({ where: { email } })
+    if (user) {
+      const error = new Error('邮箱已经注册')
+      error.code = codes.CONFLICT
+      error.isOperational = true
+      return next(error)
+    }
   }
 
   // 3. Hash password
@@ -57,7 +58,6 @@ const register = asyncHandler(async (req, res, next) => {
   res.cc({ token, user: { id: user.id, username: user.username, email: user.email, role: user.role } }, 'User registered successfully')
 })
 
-
 // @desc    Authenticate user & get token
 // @route   POST /api/login
 // @access  Public
@@ -76,7 +76,7 @@ const login = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ where: { username } })
 
   if (!user) {
-    const error = new Error('Invalid credentials')
+    const error = new Error('请填写用户名')
     error.code = codes.UNAUTHORIZED
     error.isOperational = true
     return next(error)
@@ -86,7 +86,7 @@ const login = asyncHandler(async (req, res, next) => {
   const isMatch = await bcrypt.compare(password, user.password)
 
   if (!isMatch) {
-    const error = new Error('Invalid credentials')
+    const error = new Error('密码错误')
     error.code = codes.UNAUTHORIZED
     error.isOperational = true
     return next(error)
