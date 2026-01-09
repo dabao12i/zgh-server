@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
   }, {
-    timestamps: true, // Adds createdAt and updatedAt timestamps
+    timestamps: true, // 添加 createdAt 和 updatedAt 时间戳
   });
   return User;
 };

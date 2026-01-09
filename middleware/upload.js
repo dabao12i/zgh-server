@@ -1,7 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 
-// Set storage engine
+// 设置存储引擎
 const storage = multer.diskStorage({
     destination: './uploads/',
     filename: function(req, file, cb) {
@@ -9,28 +9,28 @@ const storage = multer.diskStorage({
     }
 });
 
-// Init upload
+// 初始化上传设置
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 10000000 }, // Limit file size to 10MB
+    limits: { fileSize: 10000000 }, // 限制文件大小为10MB
     fileFilter: function(req, file, cb) {
         checkFileType(file, cb);
     }
-}).single('file'); // 'file' is the name of the form field
+}).single('file'); // 'file' 是表单字段的名称
 
-// Check file type
+// 检查文件类型
 function checkFileType(file, cb) {
-    // Allowed ext
+    // 允许的扩展名
     const filetypes = /jpeg|jpg|png|gif|pdf|doc|docx/;
-    // Check ext
+    // 检查扩展名
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    // Check mime
+    // 检查MIME类型
     const mimetype = filetypes.test(file.mimetype);
 
     if (mimetype && extname) {
         return cb(null, true);
     } else {
-        cb('Error: Images, PDFs, and Documents Only!');
+        cb('错误：只允许上传图片、PDF和文档文件！');
     }
 }
 

@@ -4,20 +4,20 @@ const { User } = sequelize.models;
 const codes = require('../config/codes');
 const bcrypt = require('bcryptjs');
 
-// @desc    Create user
+// @desc    创建用户
 // @route   POST /api/users
-// @access  Admin
+// @access  管理员
 exports.createUser = asyncHandler(async (req, res, next) => {
     const { username, email, password, role } = req.body;
 
     if (!username || !email || !password) {
-        const error = new Error('Please provide username, email, and password');
+        const error = new Error('请输入用户名、邮箱和密码');
         error.code = codes.MISSING_PARAMS;
         error.isOperational = true;
         return next(error);
     }
 
-    // Hash password
+    // 哈希密码
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -29,60 +29,60 @@ exports.createUser = asyncHandler(async (req, res, next) => {
             role
         });
         
-        // Don't send password back
+        // 不返回密码
         const user_data = { ...user.toJSON() };
         delete user_data.password;
 
-        res.cc(user_data, 'User created successfully');
+        res.cc(user_data, '用户创建成功。');
     } catch (error) {
-        // Handle potential unique constraint errors
+        // 处理潜在的唯一约束错误
         error.code = codes.INVALID_PARAMS;
         next(error);
     }
 });
 
-// @desc    Get all users
+// @desc    获取所有用户
 // @route   GET /api/users
-// @access  Admin
+// @access  管理员
 exports.getUsers = asyncHandler(async (req, res, next) => {
     const users = await User.findAll({
         attributes: { exclude: ['password'] }
     });
-    res.cc(users);
+    res.cc(users, '用户列表获取成功。');
 });
 
-// @desc    Get single user
+// @desc    获取单个用户
 // @route   GET /api/users/:id
-// @access  Admin
+// @access  管理员
 exports.getUser = asyncHandler(async (req, res, next) => {
     const user = await User.findByPk(req.params.id, {
         attributes: { exclude: ['password'] }
     });
 
     if (!user) {
-        const error = new Error('User not found');
+        const error = new Error('用户未找到。');
         error.code = codes.NOT_FOUND;
         error.isOperational = true;
         return next(error);
     }
 
-    res.cc(user);
+    res.cc(user, '用户获取成功。');
 });
 
-// @desc    Update user
+// @desc    更新用户
 // @route   PUT /api/users/:id
-// @access  Admin
+// @access  管理员
 exports.updateUser = asyncHandler(async (req, res, next) => {
     const user = await User.findByPk(req.params.id);
 
     if (!user) {
-        const error = new Error('User not found');
+        const error = new Error('用户未找到。');
         error.code = codes.NOT_FOUND;
         error.isOperational = true;
         return next(error);
     }
 
-    // Fields that can be updated
+    // 可更新字段
     const { username, email, role } = req.body;
 
     user.username = username || user.username;
@@ -95,22 +95,22 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
         const user_data = { ...user.toJSON() };
         delete user_data.password;
 
-        res.cc(user_data, 'User updated successfully');
+        res.cc(user_data, '用户信息更新成功。');
     } catch (error) {
-        // Handle potential unique constraint errors
+        // 处理潜在的唯一约束错误
         error.code = codes.INVALID_PARAMS;
         next(error);
     }
 });
 
-// @desc    Delete user
+// @desc    删除用户
 // @route   DELETE /api/users/:id
-// @access  Admin
+// @access  管理员
 exports.deleteUser = asyncHandler(async (req, res, next) => {
     const user = await User.findByPk(req.params.id);
 
     if (!user) {
-        const error = new Error('User not found');
+        const error = new Error('用户未找到。');
         error.code = codes.NOT_FOUND;
         error.isOperational = true;
         return next(error);
@@ -118,5 +118,5 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 
     await user.destroy();
 
-    res.cc(null, 'User deleted successfully');
+    res.cc(null, '用户删除成功。');
 });
