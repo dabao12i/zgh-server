@@ -52,5 +52,9 @@ router.use('/files', fileRouter);
 const userRouter = require('./userRouter');
 router.use('/users', userRouter);
 
+// 图片处理相关路由
+const imageRouter = require('./imageRouter');
+router.use('/images', imageRouter);
+
 // 导出路由实例
 module.exports = router;

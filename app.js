@@ -55,7 +55,7 @@ app.use('/api', apiRouter)
 app.use(errorHandler)
 
 // 从环境变量获取端口，并提供一个默认值
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3030
 
 // 启动服务器
 const startServer = async () => {
@@ -68,4 +68,13 @@ const startServer = async () => {
   })
 }
 
-startServer()
+startServer().catch((err) => {
+  console.error('❌ 启动失败，详细错误信息:')
+  console.error(err)
+  if (err.stack) {
+    console.error('堆栈信息:')
+    console.error(err.stack)
+  }
+  logger.error('Failed to start server:', err)
+  process.exit(1)
+})

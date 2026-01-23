@@ -18,9 +18,15 @@ const codes = {
   // 1xxx: 通用参数类错误
   INVALID_PARAMS: 1001, // 无效的参数
   MISSING_PARAMS: 1002, // 缺少必要参数
+  FILE_MISSING: 1003, // 文件缺失
+  FILE_TOO_LARGE: 1004, // 文件过大
+  UNSUPPORTED_FORMAT: 1005, // 不支持的格式
 
   // 2xxx: 资源类错误
   NOT_FOUND: 2001, // 请求的资源不存在
+
+  // 3xxx: 图片处理错误
+  IMAGE_PROCESS_ERROR: 3001, // 图片处理失败
 
   // 4xxx: 认证与授权类错误
   UNAUTHORIZED: 401, // 未经授权的访问

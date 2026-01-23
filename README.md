@@ -14,6 +14,7 @@
 *   **多环境配置**：支持开发、生产等不同环境的配置管理。
 *   **模块化代码结构**：采用路由-控制器分离模式，代码组织清晰。
 *   **Apifox 文档管理支持**：便于您在 Apifox 中管理和测试 API 接口。
+*   **图片处理功能** ✨ **新增**：集成 Sharp.js，支持压缩、缩放、裁剪、水印等 10+ 图片处理操作。
 
 ## 启动方法
 
@@ -94,12 +95,17 @@ server/
 ├── config/             # 核心配置文件 (logger.js, codes.js 等)
 ├── controllers/        # 业务控制器文件，您的业务逻辑将在这里实现
 ├── middleware/         # 自定义中间件 (errorHandler.js, asyncHandler.js 等)
+├── models/             # 数据库模型
 ├── node_modules/       # 项目依赖包 (由 npm install 生成)
 ├── routers/            # API 路由定义文件 (index.js 是主入口)
-├── utils/              # 工具函数 (responseHandler.js)
+├── uploads/            # 上传文件存储目录
+├── utils/              # 工具函数 (responseHandler.js, imageService.js 等)
 ├── .env.development    # 开发环境配置文件
 ├── .env.production     # 生产环境配置文件
 ├── .gitignore          # Git 忽略文件
+├── API_DOC.md          # API 文档
+├── SHARP_API_GUIDE.md  # 图片处理 API 详细指南 ✨ 新增
+├── UPDATES_SUMMARY.md  # 更新总结文档 ✨ 新增
 ├── app.js              # Express 应用主入口文件
 ├── package.json        # 项目元数据与依赖管理
 └── package-lock.json   # 依赖锁定文件
@@ -143,5 +149,42 @@ server/
 ## 下一步
 
 现在，您已经拥有了一个干净、结构化的 Express.js 后端项目，并了解了它的核心特性和使用方法。是时候开始编写您的微信公众号排版项目的具体业务逻辑了！
+
+## 最近更新 ✨
+
+### 2024 最新功能
+
+#### 1. **启动错误修复**
+- 修复了 `startServer()` 异步错误未被捕获导致应用崩溃的问题
+
+#### 2. **Sharp.js 图片处理功能** (新增)
+
+集成了强大的图片处理功能，支持以下操作：
+
+- ✂️ **压缩图片** - 减小文件大小，支持多种格式和质量设置
+- 📐 **缩放图片** - 改变图片尺寸，支持多种适应模式
+- 🎯 **裁剪图片** - 从图片中提取指定区域
+- 🔄 **转换格式** - 支持 JPEG、PNG、WebP、GIF、TIFF
+- 📋 **获取元数据** - 读取图片详细信息
+- 🖼️ **生成缩略图** - 快速生成预设尺寸缩略图
+- 💧 **添加水印** - 添加文字水印到图片
+- 🔁 **旋转翻转** - 旋转或翻转图片
+- ⚙️ **批量处理** - 链式执行多个操作
+
+**API 基础路径**: `/api/images`
+
+**快速开始**:
+```bash
+# 压缩图片示例
+curl -X POST http://localhost:3000/api/images/compress \
+  -F "file=@image.jpg" \
+  -F "quality=70" \
+  -F "format=webp"
+```
+
+**详细文档**: 
+- API 参考: [API_DOC.md](./API_DOC.md) 第 3 部分
+- 完整指南: [SHARP_API_GUIDE.md](./SHARP_API_GUIDE.md)
+- 更新总结: [UPDATES_SUMMARY.md](./UPDATES_SUMMARY.md)
 
 祝您开发顺利！
